@@ -5,7 +5,10 @@ LABEL org.opencontainers.image.description="Imatge bàsica per provar GitHub Act
 LABEL org.opencontainers.image.licenses="MIT"
 
 # Instal·la un paquet senzill per tenir alguna cosa a escanejar
-RUN apk add --no-cache curl
+# RUN apk add --no-cache curl
+RUN apk update \
+    && apk add --no-cache curl \
+    && rm -rf /var/cache/apk/*
 
 # Defineix un script d'entrada directament dins el Dockerfile
 CMD echo "Hola! Aquesta és una imatge de prova per a GitHub Actions + Trivy." && curl --version
