@@ -1,37 +1,11 @@
-name: Build and Push to Quay
+FROM alpine:3.20
 
-on:
-  push:
-    branches:
-      - main
+# Metadades útils
+LABEL org.opencontainers.image.description="Imatge bàsica per provar GitHub Actions + Trivy"
+LABEL org.opencontainers.image.licenses="MIT"
 
-env:
-  FULL_IMAGE: quay.io/rh_ee_jfont/shiftleft:v1
+# Instal·la un paquet senzill per tenir alguna cosa a escanejar
+RUN apk add --no-cache curl
 
-jobs:
-  build-scan-push:
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: 🧩 Checkout code
-        uses: actions/checkout@v4
-
-      - name: 🔧 Build container image
-        run: |
-          docker build -t $FULL_IMAGE .
-
-      - name: 🔍 Scan image with Trivy
-uses: aquasecurity/trivy-action@master
-        with:
-          image-ref: ${{ env.FULL_IMAGE }}
-          severity: HIGH,CRITICAL
-          exit-code: 1
-          ignore-unfixed: true
-
-      - name: 🔑 Login to Quay.io
-        run: |
-          docker login quay.io -u "${{ secrets.QUAY_USER }}" -p "${{ secrets.QUAY_PASSWORD }}"
-
-      - name: 🚀 Push image to Quay.io
-        run: |
-          docker push $FULL_IMAGE
+# Defineix un script d'entrada directament dins el Dockerfile
+CMD echo "Hola! Aquesta és una imatge de prova per a GitHub Actions + Trivy." && curl --version
